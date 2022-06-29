@@ -82,6 +82,10 @@ class RoundedLoadingButton extends StatefulWidget {
   /// The duration of the success and failed animation
   final Duration completionDuration;
 
+  /// A shadow to be drawn behind the button, if is set, the [onPressed]
+  /// callback will trigger until tap up
+  final ElevationShadow? shadow;
+
   Duration get _borderDuration {
     return Duration(milliseconds: (duration.inMilliseconds / 2).round());
   }
@@ -112,6 +116,7 @@ class RoundedLoadingButton extends StatefulWidget {
     this.completionCurve = Curves.elasticOut,
     this.completionDuration = const Duration(milliseconds: 1000),
     this.disabledColor,
+    this.shadow,
   }) : super(key: key);
 
   @override
@@ -130,6 +135,8 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
   late Animation _borderAnimation;
 
   final _state = BehaviorSubject<ButtonState>.seeded(ButtonState.idle);
+  final _elevationState =
+      BehaviorSubject<ElevationState>.seeded(ElevationState.up);
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +195,24 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
       },
     );
 
-    final _btn = ButtonTheme(
+    final btn = widget.shadow != null
+        ? _buildButtonWithShadow(childStream, widget.shadow!)
+        : _buildButtonWithoutShadow(childStream);
+
+    return SizedBox(
+      height: widget.height,
+      child: Center(
+        child: _state.value == ButtonState.error
+            ? _cross
+            : _state.value == ButtonState.success
+                ? _check
+                : btn,
+      ),
+    );
+  }
+
+  Widget _buildButtonWithoutShadow(Widget child) {
+    return ButtonTheme(
       shape: RoundedRectangleBorder(borderRadius: _borderAnimation.value),
       disabledColor: widget.disabledColor,
       padding: const EdgeInsets.all(0),
@@ -204,19 +228,58 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
           padding: const EdgeInsets.all(0),
         ),
         onPressed: widget.onPressed == null ? null : _btnPressed,
-        child: childStream,
+        child: child,
       ),
     );
+  }
 
-    return SizedBox(
-      height: widget.height,
-      child: Center(
-        child: _state.value == ButtonState.error
-            ? _cross
-            : _state.value == ButtonState.success
-                ? _check
-                : _btn,
-      ),
+  Widget _buildButtonWithShadow(Widget child, ElevationShadow shadow) {
+    final isDisabled = widget.onPressed == null;
+    return StreamBuilder(
+      stream: _elevationState,
+      builder: (context, snapshot) {
+        return Container(
+          child: GestureDetector(
+            child: Container(
+              transform: _elevationState.value == ElevationState.down &&
+                      _state.value == ButtonState.idle
+                  ? Transform.translate(offset: shadow.upOffset).transform
+                  : null,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                  color: isDisabled ? widget.disabledColor : widget.color,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.25),
+                      offset: shadow.downOffset,
+                      blurRadius: shadow.blurRadius,
+                    ),
+                    if (_elevationState.value == ElevationState.up &&
+                        _state.value == ButtonState.idle)
+                      BoxShadow(
+                        color: shadow.color,
+                        offset: shadow.upOffset,
+                      ),
+                  ]),
+              child: SizedBox(
+                child: child,
+                height: widget.height,
+                width: _squeezeAnimation.value,
+              ),
+            ),
+            onTapDown: (details) {
+              _elevationState.add(ElevationState.down);
+            },
+            onTapUp: (details) {
+              _elevationState.add(ElevationState.up);
+              widget.onPressed == null ? null : _btnPressed();
+            },
+            onTapCancel: () {
+              _elevationState.add(ElevationState.up);
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -390,4 +453,36 @@ class RoundedLoadingButtonController {
   void reset() {
     if (_resetListener != null) _resetListener!();
   }
+}
+
+/// The state of the button when elevation state is set
+enum ElevationState {
+  /// When the button is not pressed and showing the up shadow
+  up,
+
+  /// When the button is pressed and showing the down shadow
+  down,
+}
+
+/// The shadow of the button
+class ElevationShadow {
+  /// The shadow color
+  final Color color;
+
+  /// The shadow offset when the button is not pressed
+  final Offset upOffset;
+
+  /// The shadow offset when the button is pressed
+  final Offset downOffset;
+
+  /// The shadow elevation when the button is disabled
+  final double blurRadius;
+
+  /// Shadow that will be shown when the button is not pressed
+  const ElevationShadow({
+    this.color = Colors.black,
+    this.upOffset = const Offset(1, 4),
+    this.downOffset = const Offset(1, 0),
+    this.blurRadius = 2,
+  });
 }
