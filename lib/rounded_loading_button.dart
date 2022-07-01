@@ -238,9 +238,14 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
     return StreamBuilder(
       stream: _elevationState,
       builder: (context, snapshot) {
-        return Container(
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: _squeezeAnimation.value,
+            minHeight: widget.height,
+          ),
           child: GestureDetector(
             child: Container(
+              height: widget.height,
               transform: _elevationState.value == ElevationState.down &&
                       _state.value == ButtonState.idle
                   ? Transform.translate(offset: shadow.upOffset).transform
@@ -261,11 +266,7 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
                         offset: shadow.upOffset,
                       ),
                   ]),
-              child: SizedBox(
-                child: child,
-                height: widget.height,
-                width: _squeezeAnimation.value,
-              ),
+              child: child,
             ),
             onTapDown: (details) {
               _elevationState.add(ElevationState.down);
