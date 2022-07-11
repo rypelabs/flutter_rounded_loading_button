@@ -24,6 +24,10 @@ class RoundedLoadingButton extends StatefulWidget {
   /// The primary color of the button
   final Color? color;
 
+  /// Gradient colors for the button, [color] will be ignored if this is set,
+  /// only works if button has shadow
+  final Gradient? gradient;
+
   /// The vertical extent of the button.
   final double height;
 
@@ -97,6 +101,7 @@ class RoundedLoadingButton extends StatefulWidget {
     required this.onPressed,
     required this.child,
     this.color = Colors.lightBlue,
+    this.gradient,
     this.height = 50,
     this.width = 300,
     this.loaderSize = 24.0,
@@ -252,7 +257,12 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
                   : null,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(widget.borderRadius),
-                  color: isDisabled ? widget.disabledColor : widget.color,
+                  color: widget.gradient == null
+                      ? isDisabled
+                          ? widget.disabledColor
+                          : widget.color
+                      : null,
+                  gradient: widget.gradient,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.25),
