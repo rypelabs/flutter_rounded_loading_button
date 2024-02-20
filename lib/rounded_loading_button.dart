@@ -96,7 +96,7 @@ class RoundedLoadingButton extends StatefulWidget {
 
   /// initalize constructor
   const RoundedLoadingButton({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onPressed,
     required this.child,
@@ -122,7 +122,7 @@ class RoundedLoadingButton extends StatefulWidget {
     this.completionDuration = const Duration(milliseconds: 1000),
     this.disabledColor,
     this.shadow,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => RoundedLoadingButtonState();
@@ -147,7 +147,7 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    Widget _check = Container(
+    Widget check = Container(
       alignment: FractionalOffset.center,
       decoration: BoxDecoration(
         color: widget.successColor ?? theme.primaryColor,
@@ -164,7 +164,7 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
           : null,
     );
 
-    Widget _cross = Container(
+    Widget cross = Container(
       alignment: FractionalOffset.center,
       decoration: BoxDecoration(
         color: widget.errorColor,
@@ -181,7 +181,7 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
           : null,
     );
 
-    Widget _loader = SizedBox(
+    Widget loader = SizedBox(
       height: widget.loaderSize,
       width: widget.loaderSize,
       child: CircularProgressIndicator(
@@ -195,7 +195,7 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
       builder: (context, snapshot) {
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
-          child: snapshot.data == ButtonState.loading ? _loader : widget.child,
+          child: snapshot.data == ButtonState.loading ? loader : widget.child,
         );
       },
     );
@@ -208,9 +208,9 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
       height: widget.height,
       child: Center(
         child: _state.value == ButtonState.error
-            ? _cross
+            ? cross
             : _state.value == ButtonState.success
-                ? _check
+                ? check
                 : btn,
       ),
     );
@@ -223,12 +223,13 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
       padding: const EdgeInsets.all(0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          onSurface: widget.disabledColor,
           minimumSize: Size(_squeezeAnimation.value, widget.height),
+          backgroundColor: widget.color,
+          disabledForegroundColor: widget.disabledColor?.withOpacity(0.38),
+          disabledBackgroundColor: widget.disabledColor?.withOpacity(0.12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(widget.borderRadius),
           ),
-          primary: widget.color,
           elevation: widget.elevation,
           padding: const EdgeInsets.all(0),
         ),
@@ -256,26 +257,27 @@ class RoundedLoadingButtonState extends State<RoundedLoadingButton>
                   ? Transform.translate(offset: shadow.upOffset).transform
                   : null,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(widget.borderRadius),
-                  color: widget.gradient == null
-                      ? isDisabled
-                          ? widget.disabledColor
-                          : widget.color
-                      : null,
-                  gradient: widget.gradient,
-                  boxShadow: [
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                color: widget.gradient == null
+                    ? isDisabled
+                        ? widget.disabledColor
+                        : widget.color
+                    : null,
+                gradient: widget.gradient,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.25),
+                    offset: shadow.downOffset,
+                    blurRadius: shadow.blurRadius,
+                  ),
+                  if (_elevationState.value == ElevationState.up &&
+                      _state.value == ButtonState.idle)
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
-                      offset: shadow.downOffset,
-                      blurRadius: shadow.blurRadius,
+                      color: shadow.color,
+                      offset: shadow.upOffset,
                     ),
-                    if (_elevationState.value == ElevationState.up &&
-                        _state.value == ButtonState.idle)
-                      BoxShadow(
-                        color: shadow.color,
-                        offset: shadow.upOffset,
-                      ),
-                  ]),
+                ],
+              ),
               child: child,
             ),
             onTapDown: (details) {

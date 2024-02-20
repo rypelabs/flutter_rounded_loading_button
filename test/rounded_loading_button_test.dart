@@ -30,10 +30,10 @@ void main() {
               animateOnTap: false,
               controller: btnController,
               width: 200,
-              child: Text('Tap me!', style: TextStyle(color: Colors.white)),
+              child: const Text('Tap me!', style: TextStyle(color: Colors.white)),
             ),
           ),
-        )));
+        ),),);
 
     await tester.tap(find.byType(RoundedLoadingButton));
 
@@ -53,10 +53,10 @@ void main() {
               onPressed: mockOnPressedFunction.handler,
               controller: btnController,
               width: 200,
-              child: Text('Tap me!', style: TextStyle(color: Colors.white)),
+              child: const Text('Tap me!', style: TextStyle(color: Colors.white)),
             ),
           ),
-        )));
+        ),),);
 
     btnController.start();
 
@@ -77,10 +77,10 @@ void main() {
               color: Colors.blue,
               onPressed: mockOnPressedFunction.handler,
               width: 200,
-              child: Text('Tap me!', style: TextStyle(color: Colors.white)),
+              child: const Text('Tap me!', style: TextStyle(color: Colors.white)),
             ),
           ),
-        )));
+        ),),);
 
     btnController.start();
 
@@ -107,10 +107,10 @@ void main() {
               onPressed: mockOnPressedFunction.handler,
               controller: btnController,
               width: 200,
-              child: Text('Tap me!', style: TextStyle(color: Colors.white)),
+              child: const Text('Tap me!', style: TextStyle(color: Colors.white)),
             ),
           ),
-        )));
+        ),),);
 
     btnController.success();
 
@@ -136,10 +136,10 @@ void main() {
               onPressed: mockOnPressedFunction.handler,
               controller: btnController,
               width: 200,
-              child: Text('Tap me!', style: TextStyle(color: Colors.white)),
+              child: const Text('Tap me!', style: TextStyle(color: Colors.white)),
             ),
           ),
-        )));
+        ),),);
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
@@ -156,10 +156,10 @@ void main() {
               onPressed: mockOnPressedFunction.handler,
               controller: btnController,
               width: 200,
-              child: Text('Tap me!', style: TextStyle(color: Colors.white)),
+              child: const Text('Tap me!', style: TextStyle(color: Colors.white)),
             ),
           ),
-        )));
+        ),),);
 
     btnController.success();
 
@@ -180,10 +180,10 @@ void main() {
               onPressed: mockOnPressedFunction.handler,
               controller: btnController,
               width: 200,
-              child: Text('Tap me!', style: TextStyle(color: Colors.white)),
+              child: const Text('Tap me!', style: TextStyle(color: Colors.white)),
             ),
           ),
-        )));
+        ),),);
 
     btnController.error();
 

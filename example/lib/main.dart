@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 valueColor: Colors.black,
                 borderRadius: 10,
                 child: Text('''
-Tap me i have a huge text''', style: TextStyle(color: Colors.white)),
+Tap me i have a huge text''', style: TextStyle(color: Colors.white),),
               ),
               SizedBox(
                 height: 50,
@@ -84,20 +84,20 @@ Tap me i have a huge text''', style: TextStyle(color: Colors.white)),
               OutlinedButton(
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30))),
+                        borderRadius: BorderRadius.circular(30),),),
                   ),
                   onPressed: () {
                     _btnController1.reset();
                     _btnController2.reset();
                   },
-                  child: Text('Reset')),
+                  child: Text('Reset'),),
               SizedBox(
                 height: 20,
               ),
               OutlinedButton(
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30))),
+                      borderRadius: BorderRadius.circular(30),),),
                 ),
                 onPressed: () {
                   _btnController1.error();
@@ -111,7 +111,7 @@ Tap me i have a huge text''', style: TextStyle(color: Colors.white)),
               OutlinedButton(
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30))),
+                      borderRadius: BorderRadius.circular(30),),),
                 ),
                 onPressed: () {
                   // _btnController1.success();
@@ -120,9 +120,9 @@ Tap me i have a huge text''', style: TextStyle(color: Colors.white)),
                   print(_btnController1.currentState);
                 },
                 child: Text('Success'),
-              )
+              ),
             ],
           ),
-        ));
+        ),);
   }
 }
